@@ -5,3 +5,32 @@ checked out as an example of mainfold embedding- http://vecg.cs.ucl.ac.uk/Projec
 
 Week 2:
 Began work on a python Font grabber to download fonts from http://www.1001fonts.com
+hit with bad cold no work done for the week
+
+Week 3: 
+Still getting over cold 
+met with Barak on Thursday he recommended i use the google fonts library
+i dont think font grabber is needed anymore git git cloned entire font library from there git hub
+@ https://github.com/google/fonts
+
+Week4: 
+playing catch up on assignments Thursday 12/10/17 began trying to build a manifold
+
+Week5:
+out for personal reasons
+
+Week6-7:
+	
+work delayed to personal reasons
+
+week 8:
+i sat down on Wednesday morning determined to have a working version by Christmas after some experimenting in the morning i have settled to use Tkinter as my widget library. i wrote a small shell script to go through the fonts-master file from that i pulled from the google fonts library and extract and place every TTF file in a separate folder(see fontOrganiser.sh). with all my files in a convenient to access location i began work on the application i have resolved to use PIL(from the supported Pillow fork of the original PIL).
+
+the reason ill be using PIL is simple as tkinter does not recognise unsupported fonts that are not directly in the machines local font library so instead of devising a piece of software to implement all fonts into the local library i can instead create an image use the google font files and imbed the image as a label within Tkinter.
+
+Then as we cycle through the fonts we can simply replace the image instead of generating an image for each font file
+
+as of Friday Evening the App is working fully but for one small flaw witch i hope to fix by Monday Evening.
+
+Week 9:
+Monday: the application is working bare bones on python (UI will require some work now i just need to implement the machine learning)
