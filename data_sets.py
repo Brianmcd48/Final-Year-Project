@@ -3,7 +3,7 @@ from sklearn.manifold import TSNE
 import numpy
 from PIL import ImageFont, ImageDraw, Image,  ImageTk
 import os
-import pandas as pd
+import FontManifold
 
 if not os.path.exists("test_data"):
     os.makedirs("test_data")
@@ -65,4 +65,4 @@ for i in range(ttf.__len__()):
             except OSError:
                 pass
         letter = 97
-
+FontManifold
