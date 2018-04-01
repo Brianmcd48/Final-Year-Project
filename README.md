@@ -2,22 +2,14 @@
 Final Year Project
 Manifold Embedding Font Chooser
 
-## Plan
+## How To use
 
-* make an end-to-end working system with a placeholder for the actual manifold.
-* collect fonts (get scripts/pipeline set up to automate this)
-* start the manifold embedding
+* the shell script can be ran to create the fonts folder however the fonts folder here should be used and dont bother running the shell script i removed a few fonts from the fonts folder manually
 
-## Software that does manifold embedding
+* run data_sets to create a folder containing all the font test data you need based off what ever fonts are in the the "fonts" folder place what ever ttf files into "fonts" you wish to use
 
+* after creating your data_set run the manifold it will take about an hour and 30 mins for 2300 fonts at the current size setting
 
+* once the manifolds have been embed fire up the UI 
 
-## References
-
-* This has an interactive demo: http://vecg.cs.ucl.ac.uk/Projects/projects_fonts/projects_fonts.html
-
-* This is for handwritten digits: http://scikit-learn.org/stable/auto_examples/manifold/plot_lle_digits.html
-
-* "Visualization of Large Font Databases" by M. Solli https://pdfs.semanticscholar.org/024b/4ee783474c8a0ed9c6e48861564c92c3bb2d.pdf
-
-* "A Font Search Engine for Large Font Databases" M. Solli and R. Lenz / Electronic Letters on Computer Vision and Image Analysis 10(1):24-41, 2011. http://vcl.itn.liu.se/publications/2011/SL11b/385-1085-1-PB.pdf
+* a startup file is in the works to avoid the hassle 
