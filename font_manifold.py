@@ -31,9 +31,9 @@ def info( path, outpath):
         os.makedirs(outpath)
 
     for root, dirs, files in os.walk(path):
-        x=dirs
-       # x.append(dirs)
-        x.sort(key=str.lower)
+        x=[]
+        x.append(dirs)
+        x[0].sort(key=str.lower)
 
         for file in x[0]:
             img = cv2.imread(os.path.join(path, file, file+"_"+case+"_"+chr(letter)+".png"), 0)
