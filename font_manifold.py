@@ -31,9 +31,11 @@ def info( path, outpath):
         os.makedirs(outpath)
 
     for root, dirs, files in os.walk(path):
+        x=dirs
+       # x.append(dirs)
+        x.sort(key=str.lower)
 
-        for file in dirs:
-
+        for file in x[0]:
             img = cv2.imread(os.path.join(path, file, file+"_"+case+"_"+chr(letter)+".png"), 0)
 
             images.append(file+".ttf")
@@ -48,6 +50,7 @@ def info( path, outpath):
     dsImages = pd.Series(images)
 
     return df, dsImages
+
 # Scale and visualize the embedding vectors and plots them
 def plot_embedding( X, title=None):
     global letter
@@ -105,8 +108,8 @@ def plot_embedding( X, title=None):
 
 
 #embedds the data
-def embed(timer, df, case, letter, tsne, output_path, show):
-
+def embed(df, case, letter, tsne, output_path, show):
+    global timer
     print(df.shape)
     print("Computing t-SNE embedding for "+case + "-case "+chr(letter))
 
@@ -115,7 +118,7 @@ def embed(timer, df, case, letter, tsne, output_path, show):
 
     numpy.savetxt(output_path+"/" + case + "_" + chr(letter) + ".txt", X_tsne)
     # #creates graphs for visulaization
-    if show is True:
+    if show == True:
         plot_embedding(X_tsne,"t-SNE embedding of "+chr(letter))  # " +(time %.2fs)" % (time() - t0))
 
     print(time() - t0)
@@ -131,7 +134,7 @@ if __name__ == '__main__':
         output_path = 'output_graphs'
         df, dsImages=info(input_path, output_path)
 
-        embed(timer,df, case, letter, tsne,  output_path, True)
+        embed(df, case, letter, tsne,  output_path, True)
 
         letter += 1
 

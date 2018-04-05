@@ -23,6 +23,7 @@ class Data:
             os.makedirs(path)
             print("path created")
 
+
         # #populate array with .ttf files
         ttf = []
         print("populating data")
@@ -60,7 +61,6 @@ class Data:
                     draw = ImageDraw.Draw(im)
 
                     try:
-
 
                         if not os.path.exists(os.path.join(path, font_name)):
                             os.makedirs(os.path.join(path,font_name))
