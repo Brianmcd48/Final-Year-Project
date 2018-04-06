@@ -16,16 +16,16 @@ class TestStringMethods(unittest.TestCase):
         else:
             assert True
 
-
     def test_embeding(self):
         df, ds = font_manifold.info('test_data', 'test_output')
         tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
-        font_manifold.embed( df, 'lower', 97, tsne, "test_output", False)
+        font_manifold.embed( df, ds, 'lower', 97, tsne, "test_output", False)
         shutil.rmtree("test_output")
+
     def test_plot(self):
         df, ds = font_manifold.info('test_data', 'test_output')
         tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
-        font_manifold.embed( df, 'lower', 97, tsne, "test_output", True)
+        font_manifold.embed( df, ds, 'lower', 97, tsne, "test_output", True)
         shutil.rmtree("test_output")
 
 if __name__ == '__main__':

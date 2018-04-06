@@ -11,7 +11,7 @@ from sklearn import (manifold)
 from time import time
 
 # #create the manifold to be embeded later
-tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
+
 
 #df = pd.DataFrame([])
 #dsImages=pd.Series([])
@@ -19,8 +19,6 @@ tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
 letter = 97
 case = "lower"
 timer = 0.0
-
-
 
 
 # runs through folder and takes every png file for individual letters
@@ -31,7 +29,7 @@ def info( path, outpath):
         os.makedirs(outpath)
 
     for root, dirs, files in os.walk(path):
-        x=[]
+        x = []
         x.append(dirs)
         x[0].sort(key=str.lower)
 
@@ -52,7 +50,7 @@ def info( path, outpath):
     return df, dsImages
 
 # Scale and visualize the embedding vectors and plots them
-def plot_embedding( X, title=None):
+def plot_embedding( X, shape, dsImages, title=None):
     global letter
     print("graphing " + case + " " + chr(letter))
     x_min, x_max = np.min(X, 0), np.max(X, 0)
@@ -75,7 +73,7 @@ def plot_embedding( X, title=None):
     if hasattr(offsetbox, 'AnnotationBbox'):
         # only print thumbnails with matplotlib > 1.0
         shown_images = np.array([[1., 1.]])  # just something big
-        for i in range(df.shape[0]):
+        for i in range(int(shape)):
             dist = np.sum((X[i] - shown_images) ** 2, 1)
             if np.min(dist) < 4e-3:
                 # don't show points that are too close
@@ -108,7 +106,7 @@ def plot_embedding( X, title=None):
 
 
 #embedds the data
-def embed(df, case, letter, tsne, output_path, show):
+def embed(df, dsImages, case, letter, tsne, output_path, show):
     global timer
     print(df.shape)
     print("Computing t-SNE embedding for "+case + "-case "+chr(letter))
@@ -119,7 +117,7 @@ def embed(df, case, letter, tsne, output_path, show):
     numpy.savetxt(output_path+"/" + case + "_" + chr(letter) + ".txt", X_tsne)
     # #creates graphs for visulaization
     if show == True:
-        plot_embedding(X_tsne,"t-SNE embedding of "+chr(letter))  # " +(time %.2fs)" % (time() - t0))
+        plot_embedding(X_tsne, df.shape[0], dsImages,"t-SNE embedding of "+chr(letter) )  # " +(time %.2fs)" % (time() - t0))
 
     print(time() - t0)
     timer += (time() - t0)
@@ -129,12 +127,13 @@ def embed(df, case, letter, tsne, output_path, show):
 # #the loop for each letter, set to 52 for a full loop(lower and uppercase)
 
 if __name__ == '__main__':
+    tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
     for i in range(0, 52):
         input_path='test_data'
         output_path = 'output_graphs'
         df, dsImages=info(input_path, output_path)
 
-        embed(df, case, letter, tsne,  output_path, True)
+        embed(df, dsImages, case, letter, tsne,  output_path, False)
 
         letter += 1
 
