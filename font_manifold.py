@@ -13,8 +13,7 @@ from time import time
 # #create the manifold to be embeded later
 
 
-#df = pd.DataFrame([])
-#dsImages=pd.Series([])
+
 #set to 97 to start in lower case 65 for upper and preset case respectively
 letter = 97
 case = "lower"
@@ -29,6 +28,7 @@ def info( path, outpath):
         os.makedirs(outpath)
 
     for root, dirs, files in os.walk(path):
+
         x = []
         x.append(dirs)
         x[0].sort(key=str.lower)
@@ -41,7 +41,7 @@ def info( path, outpath):
             img=img.flatten()
 
             ttf.append(img)
-    #global df, dsImages
+
 
     df = pd.DataFrame(ttf)
 
@@ -56,7 +56,6 @@ def plot_embedding( X, shape, dsImages, title=None):
     x_min, x_max = np.min(X, 0), np.max(X, 0)
     X = (X - x_min) / (x_max - x_min)
 
-    fig= plt.figure()
     ax = plt.subplot(111)
     num = 0
 
@@ -65,23 +64,22 @@ def plot_embedding( X, shape, dsImages, title=None):
         plt.text(X[i, 0], X[i, 1], chr(letter),
                 color=plt.cm.Set1(num),
                  fontdict={'weight': 'bold', 'size': 9})
+        #cycles through the color of labels
         num=num+1;
         if(num>8):
             num=0
 
 
     if hasattr(offsetbox, 'AnnotationBbox'):
-        # only print thumbnails with matplotlib > 1.0
+
         shown_images = np.array([[1., 1.]])  # just something big
+
         for i in range(int(shape)):
             dist = np.sum((X[i] - shown_images) ** 2, 1)
             if np.min(dist) < 4e-3:
                 # don't show points that are too close
                 continue
             shown_images = np.r_[shown_images, [X[i]]]
-
-
-
 
             W, H= (20, 20)
             img = Image.new("RGBA", (W, H), (255, 255, 255))
@@ -96,6 +94,7 @@ def plot_embedding( X, shape, dsImages, title=None):
                 f.seek(0)
                 file_bytes = np.asarray(bytearray(f.read()), dtype=np.uint8)
                 img = cv2.imdecode(file_bytes, 0)
+                f.close()
 
             imagebox = offsetbox.AnnotationBbox(offsetbox.OffsetImage(img, cmap=plt.cm.gray_r), X[i])
             ax.add_artist(imagebox)
@@ -118,22 +117,26 @@ def embed(df, dsImages, case, letter, tsne, output_path, show):
     # #creates graphs for visulaization
     if show == True:
         plot_embedding(X_tsne, df.shape[0], dsImages,"t-SNE embedding of "+chr(letter) )  # " +(time %.2fs)" % (time() - t0))
-
+        plt.draw()
     print(time() - t0)
     timer += (time() - t0)
 
-    plt.draw()
+
 
 # #the loop for each letter, set to 52 for a full loop(lower and uppercase)
 
 if __name__ == '__main__':
+    input_path = 'test_data'
+    output_path = 'output_graphs'
+    show=True
     tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
-    for i in range(0, 52):
-        input_path='test_data'
-        output_path = 'output_graphs'
-        df, dsImages=info(input_path, output_path)
 
-        embed(df, dsImages, case, letter, tsne,  output_path, False)
+
+    for i in range(0, 1):
+
+        df, dsImages=info(input_path, output_path)
+        #Set show value to true to display graph
+        embed(df, dsImages, case, letter, tsne,  output_path, show)
 
         letter += 1
 
@@ -146,4 +149,5 @@ if __name__ == '__main__':
 
     print("Overall time(minutes):" + str(timer/60.0))
     # #un-comment to display graphs
-    plt.show()
+    if show==True:
+     plt.show()

@@ -1,6 +1,5 @@
 from PIL import ImageFont, ImageDraw, Image
 import os, shutil
-import sys
 from time import time, gmtime, strftime
 
 class Data:

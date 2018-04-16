@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import *
-from tkinter.ttk import Style
 
 from PIL import ImageFont, ImageDraw, Image,  ImageTk
 
@@ -12,58 +11,63 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import numpy as np
 import os
-import sys
 import string
-import pickle
-import textwrap
-import time
-
-
 
 org = []
-nodes=[]
-current_select=0
-fig=0
-font_box=0
+nodes = []
+current_select = 0
+past_tracker = 0
+fig = 0
+font_box = 0
 
-cursor=0
+
+cursor = 0
 letter = 'a'
-case="lower"
-current_graph="output_graphs", case + "_" + letter + ".txt"
+case = "lower"
+current_graph = "output_graphs", case + "_" + letter + ".txt"
 
 
 
-class Methods:
-    def org_fill(self):
-        global org
+def org_fill(org):
 
-        for root, dirs, files in os.walk('test_data'):
 
-            for file in files:
+    for root, dirs, files in os.walk('test_data'):
 
-                if file.endswith(chr(97) + '.png'):
+        for file in files:
 
-                    org.append(file[0:file.__len__() - 12])
+            if file.endswith(chr(97) + '.png'):
 
-            org.sort(key=str.lower)
+                org.append(file[0:file.__len__() - 12])
 
-    def get_font(self,value):
-        font = ImageFont.truetype(os.path.join('fonts', org[int(value)] + '.ttf'), 100)
-        W, H=700,200
+        org.sort(key=str.lower)
 
-        im = Image.new("RGBA", (W, H), (255, 255, 255))
-        draw = ImageDraw.Draw(im)
-        w,h = draw.textsize('Aa,Bb,Cc,Dd')
+def get_font(value, org):
 
-        draw.text((5, 0), 'Aa,Bb,Cc,Dd', (0, 0, 0), font=font,)
+    W, H=700,200
 
-        return im
+    im = Image.new("RGBA", (W, H), (255, 255, 255))
+    draw = ImageDraw.Draw(im)
+    font = ImageFont.truetype(os.path.join('fonts', org[int(value)] + '.ttf'), 100)
+    w,h = draw.textsize(letter+": Aa, Bb, Cc", font=font)
 
-    def get_label(self, value, display, label):
-        photo = ImageTk.PhotoImage(self.get_font(value))
-        display.configure(text=org[value] + ":")
-        label.configure(image=photo)
-        label.image = photo
+    if w>1000:
+        font = ImageFont.truetype(os.path.join('fonts', org[int(value)] + '.ttf'), 50)
+        draw.text((5, 25), letter+": Aa, Bb, Cc", (0, 0, 0), font=font)
+    elif w>800:
+        font = ImageFont.truetype(os.path.join('fonts', org[int(value)] + '.ttf'), 60 )
+        draw.text((5, 25), letter + ": Aa, Bb, Cc", (0, 0, 0), font=font)
+    elif w > 600:
+        font = ImageFont.truetype(os.path.join('fonts', org[int(value)] + '.ttf'), 80)
+        draw.text((5, 25), letter + ": Aa, Bb, Cc", (0, 0, 0), font=font)
+    else:
+        draw.text((5, 25), letter + ": Aa, Bb, Cc", (0, 0, 0), font=font )
+    return im
+
+def get_label(value, display, label, org):
+    photo = ImageTk.PhotoImage(get_font(value, org))
+    display.configure(text=org[value] + ":")
+    label.configure(image=photo)
+    label.image = photo
 
 
 
@@ -79,19 +83,19 @@ class Cursor:
 
 
     def set_location(self, value, label, display, fig):
-        global current_select, nodes
+        global current_select, nodes, org
 
         self.lx.set_ydata(nodes[value][1])
         self.ly.set_xdata(nodes[value][0])
 
         fig.canvas.draw()
 
-        Methods.get_label(value, display, label)
+        get_label(value, display, label, org)
 
         current_select=value
 
     def mouse_move(self, event, fig, label, display):
-        global nodes, font_box
+        global nodes, font_box, past_tracker, org
 
         if not event.inaxes:
             return
@@ -117,17 +121,18 @@ class Cursor:
 
         fig.canvas.draw()
 
+        font_box.selection_clear(past_tracker)
         font_box.select_set(tracker)
-
         font_box.yview(tracker)
-        Methods.get_label(tracker, display, label)
+        past_tracker=tracker
+        get_label(tracker, display, label, org)
 
 ######################################################################################
 ######################################################################################
 
 class App:
     def __init__(self, master):
-        global nodes, cursor, fig, font_box
+        global nodes, cursor, fig, font_box,org
 
         self.master=master
         self.master.title("Font Select")
@@ -135,19 +140,17 @@ class App:
         frame = tk.Frame(self.master)
         frame.grid(row=0, column=0)
 
-        Methods.org_fill()
-
-
+        org_fill(org)
 
         ###########################################
 
         # displays font
         display = Label(master, text=org[0]+":")
         display.grid(row=1, column=3, sticky=S+W)
-        photo = ImageTk.PhotoImage(Methods.get_font(0))
+        photo = ImageTk.PhotoImage(get_font(0, org))
         label = Label(master, image=photo)
         label.image = photo
-        label.grid(row=2, column=3, rowspan=1, columnspan=2, sticky=N + S + W)
+        label.grid(row=2, column=3, rowspan=1, columnspan=2, sticky=N  + W)
 
         ###########################################
 
@@ -188,7 +191,7 @@ class App:
         font_box.bind('<<ListboxSelect>>', font_check)
 
         font_box.grid(row=2, column=2, sticky=N)
-        print(font_box)
+
 ######################################################################################
 ######################################################################################
 
@@ -211,7 +214,7 @@ class App:
         for line in file:
             x.append(float(line.split(" ")[0]))
             y.append(float(line.split(" ")[1]))
-
+        file.close()
         nodes = np.column_stack((x, y))
 
         colors = cm.rainbow(np.linspace(0, 1, len(y)))
@@ -244,8 +247,6 @@ class App:
 
 def main():
     root= tk.Tk()
-    #root.geometry("800x1000")
-   # root.overrideredirect(True)
     root.grid_columnconfigure(0, weight=1)
     root.grid_columnconfigure(1, weight=1)
     root.grid_columnconfigure(2, weight=1)
@@ -257,7 +258,7 @@ def main():
     root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
     root.focus_set()  # <-- move focus to this widget
     root.bind("<Escape>", lambda e: root.quit())
-  #  root.minsize(root.winfo_screenwidth(), root.winfo_screenheight()-int(root.winfo_screenheight()/10))
+    #root.minsize(root.winfo_screenwidth(), root.winfo_screenheight()-int(root.winfo_screenheight()/10))
     App(root)
     root.protocol("WM_DELETE_WINDOW", lambda: root.quit())
     root.mainloop()
